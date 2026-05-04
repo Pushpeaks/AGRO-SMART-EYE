@@ -84,11 +84,46 @@ async def predict(file: UploadFile = File(...), language: str = Form("en")):
     try:
         # Read and preprocess the image
         contents = await file.read()
+
+        # --- Step 1: Verify it's a plant leaf using Groq Vision ---
+        try:
+            import base64
+            api_key = random.choice(GROQ_API_KEYS)
+            vision_client = Groq(api_key=api_key)
+            image_b64 = base64.b64encode(contents).decode("utf-8")
+            mime_type = file.content_type or "image/jpeg"
+
+            vision_response = vision_client.chat.completions.create(
+                model="meta-llama/llama-4-scout-17b-16e-instruct",
+                messages=[{
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": f"data:{mime_type};base64,{image_b64}"}
+                        },
+                        {
+                            "type": "text",
+                            "text": "Does this image show a plant leaf or plant foliage? Answer with only a single word: 'yes' or 'no'."
+                        }
+                    ]
+                }],
+                max_tokens=5,
+            )
+            vision_answer = vision_response.choices[0].message.content.strip().lower()
+            print(f"Vision check result: {vision_answer}")
+
+            if "no" in vision_answer:
+                msg = "No plant leaf detected in this image. Please upload a clear photo of a plant leaf." if language != "hi" else "इस छवि में कोई पौधे की पत्ती नहीं मिली। कृपया पौधे की पत्ती की स्पष्ट फोटो अपलोड करें।"
+                return {"is_plant": False, "disease": None, "confidence": 0.0, "message": msg, "guidance": None}
+        except Exception as ve:
+            print(f"Vision check failed, proceeding with CNN only: {ve}")
+
+        # --- Step 2: Run CNN inference ---
         image = Image.open(io.BytesIO(contents)).convert('RGB')
         img_t = transform(image)
         batch_t = torch.unsqueeze(img_t, 0)
 
-        # Run inference
         prediction = "Unknown"
         confidence = 0.0
         if model:
@@ -98,17 +133,6 @@ async def predict(file: UploadFile = File(...), language: str = Form("en")):
                 conf, index = torch.max(probabilities, 0)
                 prediction = CLASS_NAMES[index]
                 confidence = conf.item()
-
-        # Confidence threshold: if below 45%, it's likely not a plant leaf
-        CONFIDENCE_THRESHOLD = 0.45
-        if confidence < CONFIDENCE_THRESHOLD:
-            return {
-                "is_plant": False,
-                "disease": None,
-                "confidence": confidence,
-                "message": "No plant leaf detected. Please upload a clear, close-up photo of a plant leaf." if language != "hi" else "कोई पौधे की पत्ती नहीं पाई गई। कृपया पौधे की पत्ती की स्पष्ट, क्लोज़-अप फोटो अपलोड करें।",
-                "guidance": None
-            }
 
         # Generate guidance using Groq API
         guidance = {
