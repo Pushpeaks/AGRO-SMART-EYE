@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+backend/venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Datasets and Models
+backend/temp_dataset/
+backend/dataset/
+backend/*.pth
+backend/*.h5
+sample_images/
+
+# Frontend (Node)
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+
+# OS
+.DS_Store
+Thumbs.db

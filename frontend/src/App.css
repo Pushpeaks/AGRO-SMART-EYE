@@ -1,0 +1,520 @@
+@import url('https://fonts.googleapis.com/css2?family=Circular+Std:wght@300;400;500;700;900&family=Inter:wght@400;500;600;700&display=swap');
+
+/* Fallback to Inter if Circular is not available */
+:root {
+  --bg-base: #121212;
+  --bg-elevated: #181818;
+  --bg-highlight: #282828;
+  --bg-active: #3E3E3E;
+  
+  --spotify-green: #1DB954;
+  --spotify-green-hover: #1ed760;
+  
+  --text-main: #FFFFFF;
+  --text-sub: #B3B3B3;
+  --text-dim: #7B7B7B;
+
+  --card-border-radius: 8px;
+  --btn-border-radius: 500px; /* Spotify pill buttons */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+  background: #000000;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.logo-icon-wrapper {
+  display: flex;
+  align-items: center;
+  color: var(--text-main);
+  position: relative;
+}
+
+.eye-icon {
+  color: var(--text-main);
+}
+
+.leaf-icon {
+  color: var(--spotify-green);
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  transform: rotate(15deg);
+}
+
+.logo-text h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text-main); /* White */
+}
+
+.language-selector {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.language-selector button {
+  background: transparent;
+  border: none;
+  color: var(--text-sub);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.language-selector button:hover {
+  color: var(--text-main);
+}
+
+.language-selector button.active {
+  color: var(--text-main);
+  border-bottom: 2px solid var(--spotify-green);
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.header-text h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: var(--text-sub); /* Grey */
+}
+
+/* Spotify Card */
+.spotify-card {
+  background: var(--bg-elevated);
+  border-radius: var(--card-border-radius);
+  padding: 1.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.spotify-card:hover {
+  background: var(--bg-highlight);
+}
+
+/* Input Section */
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.action-tabs {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid var(--bg-highlight);
+  padding-bottom: 0.5rem;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-sub);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.tab-btn:hover {
+  color: var(--text-main);
+}
+
+.tab-btn.active {
+  color: var(--text-main);
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--spotify-green);
+}
+
+.media-container {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--card-border-radius);
+  overflow: hidden;
+  position: relative;
+  background: var(--bg-base);
+}
+
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.upload-area:hover {
+  background: var(--bg-highlight);
+}
+
+.hidden-input {
+  display: none;
+}
+
+.preview-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+.preview-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.preview-wrapper:hover .preview-overlay {
+  opacity: 1;
+}
+
+.preview-overlay p {
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: var(--text-sub);
+}
+
+.upload-icon {
+  color: var(--text-sub);
+  transition: color 0.2s ease;
+}
+
+.upload-area:hover .upload-icon {
+  color: var(--text-main);
+}
+
+.camera-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.webcam-view {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.capture-btn {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text-main);
+  color: #000;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: var(--btn-border-radius);
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.capture-btn:hover {
+  transform: translateX(-50%) scale(1.04);
+  background: #f0f0f0;
+}
+
+.analyze-btn {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: var(--btn-border-radius);
+  background: var(--spotify-green);
+  color: #000;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.analyze-btn:hover:not(.disabled) {
+  transform: scale(1.02);
+  background: var(--spotify-green-hover);
+}
+
+.analyze-btn.disabled {
+  background: var(--bg-active);
+  color: var(--text-dim);
+  cursor: not-allowed;
+}
+
+.error-msg {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #f15e6c;
+  font-size: 0.9rem;
+}
+
+/* Results Section */
+.results-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.result-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--bg-highlight);
+}
+
+.result-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.subtitle {
+  color: var(--spotify-green); /* Green */
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.disease-name {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  color: var(--text-main);
+  line-height: 1.1;
+}
+
+.confidence-pill {
+  background: rgba(29, 185, 84, 0.1);
+  color: var(--spotify-green);
+  padding: 0.5rem 1rem;
+  border-radius: var(--btn-border-radius);
+  font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.guidance-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.guidance-card {
+  background: var(--bg-base);
+  padding: 1.5rem;
+  border-radius: var(--card-border-radius);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.card-icon {
+  color: var(--text-sub);
+}
+
+.cause-card .card-icon { color: #f59e0b; }
+.effect-card .card-icon { color: #f15e6c; }
+.suggestion-card .card-icon { color: var(--spotify-green); }
+
+.card-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main); /* White */
+}
+
+.guidance-card ul {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.guidance-card li {
+  color: var(--text-sub); /* Grey */
+  font-size: 0.95rem;
+  line-height: 1.5;
+  position: relative;
+  padding-left: 1.25rem;
+}
+
+.guidance-card li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--text-main);
+  font-weight: bold;
+}
+
+.guidance-card.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Animations */
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.slide-up {
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
+  
+  .header-text h2 {
+    font-size: 1.5rem;
+  }
+
+  .disease-name {
+    font-size: 2rem;
+  }
+  
+  .result-hero {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .guidance-grid {
+    grid-template-columns: 1fr;
+  }
+  
+    .media-container {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* Footer */
+.app-footer {
+  text-align: center;
+  padding: 1.5rem;
+  margin-top: auto;
+  border-top: 1px solid var(--bg-highlight);
+}
+
+.app-footer p {
+  color: var(--text-sub);
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.highlight-text {
+  color: var(--spotify-green);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
