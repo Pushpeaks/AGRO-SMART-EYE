@@ -15,7 +15,7 @@ venv.bak/
 # Datasets and Models
 backend/temp_dataset/
 backend/dataset/
-backend/*.pth
+# backend/*.pth
 backend/*.h5
 sample_images/
 
