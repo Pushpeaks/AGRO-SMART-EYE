@@ -99,7 +99,18 @@ async def predict(file: UploadFile = File(...), language: str = Form("en")):
                 prediction = CLASS_NAMES[index]
                 confidence = conf.item()
 
-        # Generate guidance using Gemini API
+        # Confidence threshold: if below 45%, it's likely not a plant leaf
+        CONFIDENCE_THRESHOLD = 0.45
+        if confidence < CONFIDENCE_THRESHOLD:
+            return {
+                "is_plant": False,
+                "disease": None,
+                "confidence": confidence,
+                "message": "No plant leaf detected. Please upload a clear, close-up photo of a plant leaf." if language != "hi" else "कोई पौधे की पत्ती नहीं पाई गई। कृपया पौधे की पत्ती की स्पष्ट, क्लोज़-अप फोटो अपलोड करें।",
+                "guidance": None
+            }
+
+        # Generate guidance using Groq API
         guidance = {
             "causes": ["Could not fetch causes."],
             "effects": ["Could not fetch effects."],

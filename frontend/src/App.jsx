@@ -68,7 +68,11 @@ function App() {
       }
       
       const data = await response.json();
-      setResult(data);
+      if (data.is_plant === false) {
+        setError(data.message);
+      } else {
+        setResult(data);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
