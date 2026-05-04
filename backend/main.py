@@ -43,17 +43,20 @@ except Exception as e:
 device = torch.device("cpu")
 model = None
 try:
-    model = models.resnet18(pretrained=False)
+    model = models.resnet18(weights=None)
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, len(CLASS_NAMES))
     if os.path.exists('plant_disease_model.pth'):
-        model.load_state_dict(torch.load('plant_disease_model.pth', map_location=device))
+        print(f"Loading model from plant_disease_model.pth...")
+        model.load_state_dict(torch.load('plant_disease_model.pth', map_location=device, weights_only=False))
         model.eval()
         print("Model loaded successfully.")
     else:
-        print("Warning: plant_disease_model.pth not found. Predictions will be random until trained.")
+        print("Warning: plant_disease_model.pth not found.")
 except Exception as e:
+    import traceback
     print(f"Error loading model: {e}")
+    traceback.print_exc()
 
 # Preprocessing transform
 transform = transforms.Compose([
