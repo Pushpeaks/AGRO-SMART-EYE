@@ -57,7 +57,7 @@ function App() {
     formData.append('language', language);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const apiUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : (import.meta.env.DEV ? 'http://localhost:8000' : '');
       const response = await fetch(`${apiUrl}/predict`, {
         method: 'POST',
         body: formData,

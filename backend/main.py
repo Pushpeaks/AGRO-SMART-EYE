@@ -8,6 +8,8 @@ from torchvision import models, transforms
 from PIL import Image
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from groq import Groq
 
 app = FastAPI()
@@ -154,6 +156,20 @@ async def predict(file: UploadFile = File(...), language: str = Form("en")):
         print(f"Prediction error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/")
-def read_root():
-    return {"message": "AgroSmart CNN Backend is running."}
+# Serve frontend static files if they exist (for unified Hugging Face deployment)
+frontend_dist_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+
+if os.path.isdir(frontend_dist_path):
+    app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist_path, "assets")), name="assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        path_to_file = os.path.join(frontend_dist_path, full_path)
+        # Exclude /predict from being intercepted just in case, though FastAPI order should handle it
+        if full_path != "predict" and os.path.isfile(path_to_file):
+            return FileResponse(path_to_file)
+        return FileResponse(os.path.join(frontend_dist_path, "index.html"))
+else:
+    @app.get("/")
+    def read_root():
+        return {"message": "AgroSmart CNN Backend is running. (Frontend dist not found)"}
